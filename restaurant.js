@@ -102,9 +102,12 @@ var Customer = function(dietaryPreference){
 	};
 
 	Restaurant.prototype.toString = function(){
+		var plateString = '';
+		for(var i = 0; i < this.menu.plates.length; i++){
+			plateString += this.menu.plates[i].name+', '
+		}
 		console.log(this.name+', '+this.description+', and the menu includes their '+
-			'world famous '+this.menu.plates[0].name+' and '+this.menu.plates[1].name+
-			' and the drink of '+this.menu.drinks.name);
+			'world famous '+plateString+'and the drink of '+this.menu.drinks.name+'.');
 	};
 
 	Customer.prototype.toString = function (){
