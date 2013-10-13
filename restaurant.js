@@ -1,3 +1,5 @@
+$(function(){
+
 //Part I
 var FoodItem = function (name, calories, vegan, glutenFree, citrusFree){
 	//String
@@ -94,7 +96,7 @@ var Customer = function(dietaryPreference){
 	this.dietaryPreference = dietaryPreference;
 }
 
-	//is... prototypes
+	//Plate prototypes
 	Plate.prototype.isVegan = function (){
 		var itemVegan = [];
 		var counter = 0;
@@ -152,16 +154,20 @@ var Customer = function(dietaryPreference){
 		}
 	};
 
-	//toString prototypes
-	Drink.prototype.toString = function (){
-		console.log('The '+this.name+' drink, '+this.description+' and contains '+
-			this.items.join(', ')+' and costs $'+this.price+'.');
-	};
-
 	Plate.prototype.toString = function (){
 		console.log('The '+this.name+' plate, '+this.description+', includes '+
 			this.items.join(', ')+' and '+this.items.isVegan+' '+this.items.isGlutenFree+' '+
 			this.items.isCitrusFree+' and costs $'+this.price+'.');
+	};
+
+	Plate.prototype.create = function(){
+		return $('<div class="menu">{name}</div>'.supplant(this.items.name));
+	}
+
+	//toString prototypes
+	Drink.prototype.toString = function (){
+		console.log('The '+this.name+' drink, '+this.description+' and contains '+
+			this.items.join(', ')+' and costs $'+this.price+'.');
 	};
 
 	Order.prototype.toString = function (){
@@ -189,6 +195,10 @@ var Customer = function(dietaryPreference){
 			this.dietaryPreference);
 	};
 
+	Restaurant.prototype.create = function (){
+		return $('<div class="restaurant">{0}</div>'.supplant([this.name]));
+	}
+
 	//menu items
 	var burrito = new Plate('Super Burrito', 'a fabulous bean and beef burrito', 
 		[tortilla, refried_beans, ground_beef, cheese],	11.99);
@@ -205,4 +215,8 @@ var Customer = function(dietaryPreference){
 		" Restaurant", "really tasty stuff...kinda...hey, just try us, no, seriously"+
 		" if you don't my mom will be really upset", octoberMenu);
 
+	$('.menu').append(newmexRest.create());
+
 	newmexRest.toString();
+
+});
