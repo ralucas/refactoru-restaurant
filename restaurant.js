@@ -12,7 +12,7 @@ var FoodItem = function (name, calories, vegan, glutenFree, citrusFree){
 	this.glutenFree = glutenFree;
 	//Boolean
 	this.citrusFree = citrusFree;
-}
+};
 
 	FoodItem.prototype.isVegan = function isVegan(){
 		return this.vegan ? 'is a vegan item':'is not a vegan item';
@@ -27,8 +27,8 @@ var FoodItem = function (name, calories, vegan, glutenFree, citrusFree){
 	};
 
 	FoodItem.prototype.toString = function toString(){
-		console.log('The '+ this.name +' has '+ this.calories +' calories. It ' +this.isVegan()+ ', ' 
-			+this.isGlutenFree()+ ', and ' +this.isCitrusFree()+'.');
+		return 'the '+ this.name +' has '+ this.calories +' calories and is '+this.isVegan()+', '+
+			this.isGlutenFree()+', and '+this.isCitrusFree()+', ';
 	};
 
 var carrot = new FoodItem('carrot', 50, true, true, true);
@@ -37,7 +37,7 @@ var orange = new FoodItem('orange', 30, true, true, true);
 var tortilla = new FoodItem('tortilla', 40, true, false, true);
 var refried_beans = new FoodItem('refried beans', 100, true, true, true);
 var cheese = new FoodItem('cheese', 150, false, true, true);
-var ground_beef = new FoodItem('ground beef', 300, false, true, true); 
+var ground_beef = new FoodItem('ground beef', 300, false, true, true);
 var avocado = new FoodItem('avocado', 200, true, true, true);
 var tomato = new FoodItem('tomato', 100, true, true, true);
 var salsa = new FoodItem('salsa', 300, true, true, true);
@@ -46,10 +46,6 @@ var tequila = new FoodItem('tequila', 100, true, true, true);
 var special_margarita_blend = new FoodItem('special margarita blend', 200, true, true, false);
 var ice = new FoodItem('ice', 0, true, true, true);
 var love = new FoodItem('love', 0, true, true, true);
-
-carrot.toString();
-cheeseburger.toString();
-orange.toString();
 
 //Part II
 
@@ -60,7 +56,7 @@ var Drink = function(name, description, items, price){
 	this.items = items;
 	//number
 	this.price = price;
-}
+};
 
 var Plate = function(name, description, items, price){
 	//strings
@@ -70,18 +66,19 @@ var Plate = function(name, description, items, price){
 	this.items = items;
 	//number
 	this.price = price;
-}
+};
 
-var Order = function(plates){
+var Order = function(plates, drinks){
 	//array
 	this.plates = plates;
-}
+	this.drinks = drinks;
+};
 
 var Menu = function(plates, drinks){
 	//array
 	this.plates = plates;
 	this.drinks = drinks;
-}
+};
 
 var Restaurant = function(name, description, menu){
 	//strings
@@ -89,12 +86,12 @@ var Restaurant = function(name, description, menu){
 	this.description = description;
 	//object
 	this.menu = menu;
-}
+};
 
 var Customer = function(dietaryPreference){
 	//string
 	this.dietaryPreference = dietaryPreference;
-}
+};
 
 	//Plate prototypes
 	Plate.prototype.isVegan = function (){
@@ -105,7 +102,7 @@ var Customer = function(dietaryPreference){
 		}
 		for(var j = 0; j < itemVegan.length; j++){
 			if(itemVegan[j] === false){
-				counter += 1
+				counter += 1;
 			}
 		}
 		if(counter > 1){
@@ -124,7 +121,7 @@ var Customer = function(dietaryPreference){
 		}
 		for(var j = 0; j < itemCitrus.length; j++){
 			if(itemCitrus[j] === false){
-				counter += 1
+				counter += 1;
 			}
 		}
 		if(counter > 1){
@@ -143,7 +140,7 @@ var Customer = function(dietaryPreference){
 		}
 		for(var j = 0; j < itemGluten.length; j++){
 			if(itemGluten[j] === false){
-				counter += 1
+				counter += 1;
 			}
 		}
 		if(counter > 1){
@@ -154,15 +151,19 @@ var Customer = function(dietaryPreference){
 		}
 	};
 
-	Plate.prototype.toString = function (){
-		console.log('The '+this.name+' plate, '+this.description+', includes '+
-			this.items.join(', ')+' and '+this.items.isVegan+' '+this.items.isGlutenFree+' '+
-			this.items.isCitrusFree+' and costs $'+this.price+'.');
+	var loopStringer = function(arr){
+		var str = '';
+		for(var i = 0; i < arr.length; i++){
+			str += arr[i].toString();
+		}
+		return str;
 	};
 
-	Plate.prototype.create = function(){
-		return $('<div class="menu">{name}</div>'.supplant(this.items.name));
-	}
+	Plate.prototype.toString = function (){
+		console.log('The '+this.name+' plate, '+this.description+', is '+this.isGlutenFree()+
+			', '+this.isVegan()+', '+this.isCitrusFree()+', includes '+
+			loopStringer(this.items)+'and costs $'+this.price+'.');
+	};
 
 	//toString prototypes
 	Drink.prototype.toString = function (){
@@ -175,8 +176,8 @@ var Customer = function(dietaryPreference){
 	};
 
 	Menu.prototype.toString = function (){
-		console.log('The Menu has the following awesome food plates of '
-			+this.plates.name+' and drinks of '+this.drinks.name);
+		console.log('The Menu has the following awesome food plates of '+
+			this.plates.name+' and drinks of '+this.drinks.name);
 	};
 
 	Restaurant.prototype.toString = function(){
@@ -195,12 +196,48 @@ var Customer = function(dietaryPreference){
 			this.dietaryPreference);
 	};
 
+	var loopCreate = function(arr){
+		var str;
+		for(var i = 0; i < arr.length; i++){
+			str += arr[i].create();
+		}
+		return str;
+	};
+
+	var looper = function(arr){
+		var str = '';
+		for(var i = 0; i < arr.length; i++){
+			str += arr[i]+',';
+		}
+		return str;
+	};
+
+	FoodItem.prototype.create = function (){
+		return '<ul><li class=fooditem>{0}</li></ul>'.supplant([this.name]);
+	};
+
+	Drink.prototype.create = function (){
+		return '<div class="drinks">{0}, {1}</div>'.supplant([this.name, this.description])+
+			loopCreate(this.items);
+	};
+
+	Plate.prototype.create = function (){
+		return '<div class="plate">{0}, {1}</div>'.supplant([this.name, this.description])+
+			loopCreate(this.items);
+	};
+
+	Menu.prototype.create = function (){
+		return '<div class="menu"></div><div class="drinks"></div>'+
+		loopCreate(this.plates)+loopCreate(this.drinks);
+	};
+
 	Restaurant.prototype.create = function (){
-		return $('<div class="restaurant">{0}</div>'.supplant([this.name]));
-	}
+		return '<h1 class="restaurant">{0}</h1><p class="lead">{1}</p><h3>{2}</h3>'
+			.supplant([this.name, this.description, this.menu])+this.menu.create();
+	};
 
 	//menu items
-	var burrito = new Plate('Super Burrito', 'a fabulous bean and beef burrito', 
+	var burrito = new Plate('Super Burrito', 'a fabulous bean and beef burrito',
 		[tortilla, refried_beans, ground_beef, cheese],	11.99);
 
 	var guacamole = new Plate('Holy Guacamole', 'the best guac this side of the'+
@@ -209,14 +246,12 @@ var Customer = function(dietaryPreference){
 	var margarita = new Drink("Margaret's Margarita", 'a tasty blend of tequila'+
 		' and magarita', [tequila, special_margarita_blend, ice, love], 3.99);
 
-	var octoberMenu = new Menu([burrito, guacamole], margarita);
+	var octoberMenu = new Menu([burrito, guacamole], [margarita]);
 
 	var newmexRest = new Restaurant("Rudy's All-Star Breakfast Buffet and New Mexican"+
-		" Restaurant", "really tasty stuff...kinda...hey, just try us, no, seriously"+
-		" if you don't my mom will be really upset", octoberMenu);
+		" Restaurant", "really tasty stuff...kinda...hey, just try us", octoberMenu);
 
-	$('.menu').append(newmexRest.create());
-
-	newmexRest.toString();
+	//element creation
+	$('.container').append(newmexRest.create());
 
 });
