@@ -159,10 +159,29 @@ var Customer = function(dietaryPreference){
 		return str;
 	};
 
+	var loopCreate = function(arr){
+		var str = '';
+		for(var i = 0; i < arr.length; i++){
+			str += arr[i].create();
+		}
+		return str;
+	};
+
+	var looper = function(arr){
+		var str = '';
+		for(var i = 0; i < arr.length; i++){
+			str += arr[i]+',';
+		}
+		return str;
+	};
+
+	loopStringer(orange);
+
 	Plate.prototype.toString = function (){
+		var str = loopStringer(this.items);
 		console.log('The '+this.name+' plate, '+this.description+', is '+this.isGlutenFree()+
 			', '+this.isVegan()+', '+this.isCitrusFree()+', includes '+
-			loopStringer(this.items)+'and costs $'+this.price+'.');
+			str+'and costs $'+this.price+'.');
 	};
 
 	//toString prototypes
@@ -177,7 +196,7 @@ var Customer = function(dietaryPreference){
 
 	Menu.prototype.toString = function (){
 		console.log('The Menu has the following awesome food plates of '+
-			this.plates.name+' and drinks of '+this.drinks.name);
+			loopStringer(this.plates)+' and drinks of '+loopStringer(this.drinks));
 	};
 
 	Restaurant.prototype.toString = function(){
@@ -196,44 +215,33 @@ var Customer = function(dietaryPreference){
 			this.dietaryPreference);
 	};
 
-	var loopCreate = function(arr){
-		var str;
-		for(var i = 0; i < arr.length; i++){
-			str += arr[i].create();
-		}
-		return str;
-	};
-
-	var looper = function(arr){
-		var str = '';
-		for(var i = 0; i < arr.length; i++){
-			str += arr[i]+',';
-		}
-		return str;
-	};
-
 	FoodItem.prototype.create = function (){
-		return '<ul><li class=fooditem>{0}</li></ul>'.supplant([this.name]);
+		return '<ul><li class=fooditem>{name}</li></ul>'.supplant(this);
 	};
 
 	Drink.prototype.create = function (){
-		return '<div class="drinks">{0}, {1}</div>'.supplant([this.name, this.description])+
-			loopCreate(this.items);
+		var str = loopCreate(this.items);
+		return '<div class="drinks">{name}, {description}</div>'.supplant(this)+
+			str;
 	};
 
 	Plate.prototype.create = function (){
-		return '<div class="plate">{0}, {1}</div>'.supplant([this.name, this.description])+
-			loopCreate(this.items);
+		var str = loopCreate(this.items);
+		console.log(str);
+		return '<div class="plate">{name}, {description}</div>'.supplant(this)+str;
+
 	};
 
 	Menu.prototype.create = function (){
-		return '<div class="menu"></div><div class="drinks"></div>'+
-		loopCreate(this.plates)+loopCreate(this.drinks);
+		var str1 = loopCreate(this.plates);
+		var str2 = loopCreate(this.drinks);
+		return str1 + str2;
+		//return '<div class="plates">'+str1+'</div><div class="drinks">'+str2+'</div>';
 	};
 
 	Restaurant.prototype.create = function (){
-		return '<h1 class="restaurant">{0}</h1><p class="lead">{1}</p><h3>{2}</h3>'
-			.supplant([this.name, this.description, this.menu])+this.menu.create();
+		return '<h1 class="restaurant">{name}</h1><p class="lead">{description}</p>'
+			.supplant(this)+this.menu.create();
 	};
 
 	//menu items
