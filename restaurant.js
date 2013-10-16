@@ -216,32 +216,45 @@ var Customer = function(dietaryPreference){
 	};
 
 	FoodItem.prototype.create = function (){
-		return '<ul><li class=fooditem>{name}</li></ul>'.supplant(this);
+		console.log(this.name);
+		var closest = $('.items').closest();
+		return $('<li class="fooditem">{name}</li>'.supplant(this)).appendTo(closest);
 	};
 
 	Drink.prototype.create = function (){
-		var str = loopCreate(this.items);
-		return '<div class="drinks">{name}, {description}</div>'.supplant(this)+
-			str;
+		for(var i = 0; i < this.items.length; i++){
+			console.log(this.items[i]);
+			this.items[i].create();
+		}
+		return $('<div class="drinks"><h3>{name}</h3><p>${price}</p>'.supplant(this)+
+		'<p>{description}</p><ul class="items"></ul></div>'.supplant(this)+
+		'<button type="button" class="btn btn-default btn-xs">Order</button></div>')
+		.appendTo('.menu');
 	};
 
 	Plate.prototype.create = function (){
-		var str = loopCreate(this.items);
-		console.log(str);
-		return '<div class="plate">{name}, {description}</div>'.supplant(this)+str;
-
+		for(var i = 0; i < this.items.length; i++){
+			console.log(this.items[i]);
+			this.items[i].create();
+		}
+		return $('<div class="plate"><h3>{name}</h3><p>${price}</p>'.supplant(this)+
+		'<p>{description}</p><ul class="items"></ul>'.supplant(this)+
+		'<button type="button" class="btn btn-default btn-xs">Order</button></div>')
+		.appendTo('.menu');
 	};
 
 	Menu.prototype.create = function (){
-		var str1 = loopCreate(this.plates);
-		var str2 = loopCreate(this.drinks);
-		return str1 + str2;
-		//return '<div class="plates">'+str1+'</div><div class="drinks">'+str2+'</div>';
+		for(var i = 0; i < this.plates.length; i++){
+			this.plates[i].create();
+		}
+		for(var i = 0; i < this.drinks.length; i++){
+			this.drinks[i].create();
+		}
 	};
 
 	Restaurant.prototype.create = function (){
-		return '<h1 class="restaurant">{name}</h1><p class="lead">{description}</p>'
-			.supplant(this)+this.menu.create();
+		return $('<h1 class="restaurant">{name}</h1><p class="lead">{description}</p>'
+			.supplant(this));
 	};
 
 	//menu items
@@ -256,10 +269,13 @@ var Customer = function(dietaryPreference){
 
 	var octoberMenu = new Menu([burrito, guacamole], [margarita]);
 
-	var newmexRest = new Restaurant("Rudy's All-Star Breakfast Buffet and New Mexican"+
-		" Restaurant", "really tasty stuff...kinda...hey, just try us", octoberMenu);
+	var newmexRest = new Restaurant("rudy's all-star buffet", "a restaurant", octoberMenu);
 
 	//element creation
-	$('.container').append(newmexRest.create());
+	$('.head').append(newmexRest.create());
+	octoberMenu.create();
+
+
+	
 
 });

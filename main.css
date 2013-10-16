@@ -5,3 +5,17 @@
 ul{
 	list-style: none;
 }
+
+.head, h3{
+	color: rgba(0,0,0,.7);
+}
+
+.head {
+	border-bottom: solid rgba(0,0,0,.1);
+}
+
+.cart {
+	margin-top: 1%;
+	background: rgba(0,0,0,.01);
+	height: 100%;
+}
