@@ -46,7 +46,7 @@ var tequila = new FoodItem('tequila', 100, true, true, true);
 var special_margarita_blend = new FoodItem('special margarita blend', 200, true, true, false);
 var ice = new FoodItem('ice', 0, true, true, true);
 var love = new FoodItem('love', 0, true, true, true);
-
+var dietaryPrefs = ['Vegan', 'Gluten Free', 'Citrus Free'];
 //Part II
 
 var Drink = function(name, description, items, price){
@@ -125,7 +125,7 @@ var Customer = function(dietaryPreference){
 			}
 		}
 		if(counter > 1){
-			return 'gluten free';
+			return 'Gluten free';
 		}
 		else{
 			return 'not gluten free';
@@ -144,7 +144,7 @@ var Customer = function(dietaryPreference){
 			}
 		}
 		if(counter > 1){
-			return 'citrus free';
+			return 'Citrus free';
 		}
 		else{
 			return 'not citrus free';
@@ -174,8 +174,6 @@ var Customer = function(dietaryPreference){
 		}
 		return str;
 	};
-
-	loopStringer(orange);
 
 	Plate.prototype.toString = function (){
 		var str = loopStringer(this.items);
@@ -226,10 +224,11 @@ var Customer = function(dietaryPreference){
 			console.log(this.items[i]);
 			this.items[i].create();
 		}
-		return $('<div class="drinks"><h3>{name}</h3><p>${price}</p>'.supplant(this)+
-		'<p>{description}</p><ul class="items"></ul></div>'.supplant(this)+
-		'<button type="button" class="btn btn-default btn-xs">Order</button></div>')
-		.appendTo('.menu');
+		return $('<div class="drinks menuItem" ><h3 class="name">{name}</h3>'.supplant(this)+
+			'<p class="price" data-price={price}>${price}</p>'.supplant(this)+
+			'<p class="button">{description}</p><ul class="items"></ul>'.supplant(this)+
+			'<button type="button" class="btn btn-default btn-xs order">Order</button></div>')
+			.appendTo('.menu');
 	};
 
 	Plate.prototype.create = function (){
@@ -237,10 +236,12 @@ var Customer = function(dietaryPreference){
 			console.log(this.items[i]);
 			this.items[i].create();
 		}
-		return $('<div class="plate"><h3>{name}</h3><p>${price}</p>'.supplant(this)+
-		'<p>{description}</p><ul class="items"></ul>'.supplant(this)+
-		'<button type="button" class="btn btn-default btn-xs">Order</button></div>')
-		.appendTo('.menu');
+		return $('<div class="plates menuItem" data-vegan="{0}" data-citrus="{1}" data-gluten="{2}">'.supplant([this.isVegan(), this.isCitrusFree(), this.isGlutenFree()])+
+			'<h3 class="name">{name}</h3>'.supplant(this)+
+			'<p class="price" data-price={price}>${price}</p>'.supplant(this)+
+			'<p class="desc">{description}</p><ul class="items"></ul>'.supplant(this)+
+			'<button type="button" class="btn btn-default btn-xs order">Order</button></div>')
+			.appendTo('.menu');
 	};
 
 	Menu.prototype.create = function (){
@@ -257,15 +258,40 @@ var Customer = function(dietaryPreference){
 			.supplant(this));
 	};
 
+	var createDietaryPrefs = function (arr){
+		for(var i = 0; i < arr.length; i++){
+			$('.diet-list').append('<li><input class="diet-check" type="checkbox"'+
+				'value="{0}"><label for="{0}">{0}</label></li>'.supplant([arr[i]]));
+		}
+	};
+
+	var totalP = (function(){
+		var totalPrice = 0;
+		var total = function total (price){
+			totalPrice += price;
+			return totalPrice;
+		};
+
+		var totalsub = function totalsub (price){
+			totalPrice -= price;
+			return totalPrice;
+		}
+
+		return {
+			total : total,
+			totalsub : totalsub
+		}
+	})();
+
 	//menu items
 	var burrito = new Plate('Super Burrito', 'a fabulous bean and beef burrito',
-		[tortilla, refried_beans, ground_beef, cheese],	11.99);
+		[tortilla, refried_beans, ground_beef, cheese],	12);
 
 	var guacamole = new Plate('Holy Guacamole', 'the best guac this side of the'+
-		' Mississip', [avocado, tomato, salsa, special_spice], 6.79);
+		' Mississip', [avocado, tomato, salsa, special_spice], 7);
 
 	var margarita = new Drink("Margaret's Margarita", 'a tasty blend of tequila'+
-		' and magarita', [tequila, special_margarita_blend, ice, love], 3.99);
+		' and magarita', [tequila, special_margarita_blend, ice, love], 5);
 
 	var octoberMenu = new Menu([burrito, guacamole], [margarita]);
 
@@ -274,8 +300,38 @@ var Customer = function(dietaryPreference){
 	//element creation
 	$('.head').append(newmexRest.create());
 	octoberMenu.create();
+	createDietaryPrefs(dietaryPrefs);
 
+	$('.menu').on('click', '.order', function(){
+		var itemName = $(this).closest('.menuItem').find('.name').text();
+		var itemPrice = $(this).closest('.menuItem').find('.price').attr('data-price');
+		var itemTotal = totalP.total(parseInt(itemPrice));
+		$('#order').append('<p class="orderItem">'+itemName+' '+'<span class="orderPrice" data-itemPrice='+
+			itemPrice+'>$'+itemPrice+'  </span><span>'+'<button type="button" class="btn btn-default btn-xs remove">'+
+			'Remove</button></span></p>');
+		$('#totalPrice').empty();
+		$('#totalPrice').append('<span data-total='+itemTotal+'>$'+itemTotal+'</span>');
+	});
 
-	
+	$('.cart').on('click', '.remove', function(){
+		var orderItem = $(this).closest('.orderItem');
+		var itemPrice = $(this).closest('.orderItem').find('.orderPrice').attr('data-itemPrice');
+		var itemTotal = $(this).closest('.cart').find('#totalPrice span').attr('data-total');
+		var newTotal = totalP.totalsub(parseInt(itemPrice));
+		$('#totalPrice').empty();
+		$('#totalPrice').append('<span data-total='+newTotal+'>$'+newTotal+'</span>');
+		orderItem.remove();
+	});
+
+	$('.diet').on('click', '.diet-check', function(){
+		var type = $('input:checked').val();
+		$vegan = $(this).closest('.container').find('.menuItem').attr('data-vegan');
+		$gluten = $(this).closest('.container').find('.menuItem').attr('data-gluten');
+		$citrus = $(this).closest('.container').find('.menuItem').attr('data-citrus');
+		console.log($citrus);
+		// if(type === "Vegan"){
+		// 	$vegan.css('background', 'yellow');
+		// }
+	});
 
 });
