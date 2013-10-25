@@ -325,13 +325,15 @@ var Customer = function(dietaryPreference){
 
 	$('.diet').on('click', '.diet-check', function(){
 		var type = $('input:checked').val();
-		$vegan = $(this).closest('.container').find('.menuItem').attr('data-vegan');
+		console.log('check', type);
+		$menuItem = $(this).closest('.container').find('.menuItem');
+		$vegan = $(this).closest('.container').find('.menuItem').attr('data-vegan') === 'Vegan';
 		$gluten = $(this).closest('.container').find('.menuItem').attr('data-gluten');
 		$citrus = $(this).closest('.container').find('.menuItem').attr('data-citrus');
-		console.log($citrus);
-		// if(type === "Vegan"){
-		// 	$vegan.css('background', 'yellow');
-		// }
+		console.log('mi', $menuItem);
+		if((type === "Vegan") && ($menuItem.attr('data-vegan') === 'Vegan')){
+			console.log($menuItem);
+		}
 	});
 
 });
