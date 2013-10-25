@@ -236,7 +236,7 @@ var Customer = function(dietaryPreference){
 			console.log(this.items[i]);
 			this.items[i].create();
 		}
-		return $('<div class="plates menuItem" data-vegan="{0}" data-citrus="{1}" data-gluten="{2}">'.supplant([this.isVegan(), this.isCitrusFree(), this.isGlutenFree()])+
+		return $('<div class="plates menuItem" data-vegan="{0}" data-gluten="{1}" data-citrus="{2}">'.supplant([this.isVegan(), this.isCitrusFree(), this.isGlutenFree()])+
 			'<h3 class="name">{name}</h3>'.supplant(this)+
 			'<p class="price" data-price={price}>${price}</p>'.supplant(this)+
 			'<p class="desc">{description}</p><ul class="items"></ul>'.supplant(this)+
@@ -325,15 +325,59 @@ var Customer = function(dietaryPreference){
 
 	$('.diet').on('click', '.diet-check', function(){
 		var type = $('input:checked').val();
-		console.log('check', type);
 		$menuItem = $(this).closest('.container').find('.menuItem');
 		$vegan = $(this).closest('.container').find('.menuItem').attr('data-vegan') === 'Vegan';
 		$gluten = $(this).closest('.container').find('.menuItem').attr('data-gluten');
 		$citrus = $(this).closest('.container').find('.menuItem').attr('data-citrus');
-		console.log('mi', $menuItem);
-		if((type === "Vegan") && ($menuItem.attr('data-vegan') === 'Vegan')){
-			console.log($menuItem);
-		}
+		
+		// if(type === 'Vegan'){
+		// 	$menuItem.filter(function (){
+		// 		return $(this).attr('data-vegan') === 'not Vegan';
+		// 	}).addClass('hidden');
+		// }
+
+		// if(type === 'Gluten Free'){
+		// 	$menuItem.filter(function (){
+		// 		return $(this).attr('data-gluten') === 'not gluten free';
+		// 	}).addClass('hidden');
+		// }
+		$menuItem.addClass(function() {
+			if (type === 'Vegan' && ($(this).attr('data-vegan') === 'not Vegan')) {
+				return "hidden";
+			}
+		});
+
+		$menuItem.removeClass(function (){
+			if (type === undefined && ($(this).attr('data-vegan') === 'not Vegan')) {
+				return 'hidden';
+			}
+		});
+
+
+		$menuItem.addClass(function() {
+			if (type === 'Gluten Free' && ($(this).attr('data-gluten') === 'not gluten free')) {
+				return "hidden";
+			}
+		});
+
+		$menuItem.removeClass(function (){
+			if (type === undefined && ($(this).attr('data-gluten') === 'not gluten free')) {
+				return 'hidden';
+			}
+		});
+		
+		$menuItem.addClass(function() {
+			if (type === 'Citrus Free' && ($(this).attr('data-citrus') === 'not citrus free')) {
+				return "hidden";
+			}
+		});
+
+		$menuItem.removeClass(function (){
+			if (type === undefined && ($(this).attr('data-citrus') === 'not citrus free')) {
+				return 'hidden';
+			}
+		});
+		
 	});
 
 });
