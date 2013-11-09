@@ -62,9 +62,10 @@ Create a user interface for the Restaurant Objects exercise. Display a restauran
 
 Requirements
 -------------
-1. Add a create method to each object. This create method should return a DOM element for that object. 
-e.g.
-  return $('<div class="food-item">{name}</div>'.supplant(myFoodItem));
+1. Add a create method to each object. This create method should return a DOM element for that object, i.e.
+```
+return $('<div class="food-item">{name}</div>'.supplant(myFoodItem));
+```
 2. These create methods should all be pure functions. For code reuse, you can call create methods of contained objects, just like toString was used in the previous exercise.
 3. When the page loads, render a restaurant with its name and menu.
 4. When the user clicks on a plate, they get the option to add it to their order.
